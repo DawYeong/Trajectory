@@ -193,7 +193,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
         if (nMax < 4) { // maximum of 4 bullets
             mousePosition = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
             bulletPosition = new Vector2(heroPosition.x + fHeroWidth / 2, heroPosition.y + fHeroHeight / 2);
-            vDir = mousePosition.sub(heroPosition);
+            vDir = mousePosition.sub(heroPosition); //Daniel Shiffman helped us a bit with the mouse vectors
             alBullets.add(new Bullets(bulletPosition, vDir, SR));
             nMax++;
         }
