@@ -18,26 +18,19 @@ public class Bullets {
     Vector2 vPos;
     ShapeRenderer SR;
     Vector2 dir, grav = new Vector2(0, (float) 0.1);
-    float fX, fY;
     boolean canMove = true;
 
     Bullets(Vector2 vPos, Vector2 tempDirection, ShapeRenderer Temp) {
-        //bullets(float fTempX, float fTempY, ShapeRenderer Temp) {
         this.vPos = vPos;
-//        this.fX = fTempX;
-//        this.fY = fTempY;
         this.dir = tempDirection;
         this.SR = Temp;
         dir.setLength(10f);
 
     }
-    //}
 
     public void Update() {
         ammo();
         move();
-//        dir.add(grav);
-//        dir.clamp(-0.01f, 0.01f);
     }
 
     public void ammo() {

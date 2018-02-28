@@ -17,15 +17,15 @@ import java.util.ArrayList;
 public class Trajectory extends ApplicationAdapter implements InputProcessor {
 
     SpriteBatch batch;
-    static Sprite Hero;
+    Sprite Hero;
     Texture img;
     Vector2 heroPosition, bulletPosition, mousePosition, vDir;
     ShapeRenderer SR;
-    float fHeroWidth = 50, fHeroHeight = 50, fPlatWidth = 100, fPlatHeight = 100, fPlatX, fPlatY, fVelocity, fGravity = (float) 0.1;
-    ArrayList<gdx.trajectory.Platforms> alPlatforms = new ArrayList<Platforms>();
+    float fHeroWidth, fHeroHeight, fVelocity, fGravity;
+   // ArrayList<gdx.trajectory.Platforms> alPlatforms = new ArrayList<Platforms>();
     ArrayList<gdx.trajectory.Bullets> alBullets = new ArrayList<Bullets>();
-    int nMax = 0;
-    boolean canJump, isHitPlatform, isOnground;
+    int nMax; // max number of bullets at a time
+    boolean canJump, isOnground;
 
     @Override
     public void create() {
@@ -34,6 +34,10 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
         img = new Texture("smiley face.png");
         Hero = new Sprite(img);
         SR = new ShapeRenderer();
+        fHeroWidth = 50;
+        fHeroHeight = 50;
+        fGravity = (float) 0.1;
+        nMax = 0;
         heroPosition = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
     }
 
@@ -41,43 +45,37 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Sprites();
+        createHero();
         //platforms();
         move();
         spawnBullets();
     }
 
-    public void Sprites() {
+    public void createHero() {
         batch.begin();
         batch.draw(Hero, heroPosition.x, heroPosition.y, fHeroWidth, fHeroHeight);
         batch.end();
         Holster();
-
     }
 
-    public void platforms() {
-        alPlatforms.add(new Platforms(0, 50, batch));
-        alPlatforms.add(new Platforms(150, 250, batch));
-        alPlatforms.add(new Platforms(400, 450, batch));
-        alPlatforms.add(new Platforms(450, 250, batch));
-        alPlatforms.add(new Platforms(600, 50, batch));
-        for (int i = 0; i < alPlatforms.size(); i++) {
-            alPlatforms.get(i).Update();
-//            if((heroPosition.x + fHeroWidth > alPlatforms.get(i).fX || heroPosition.x < alPlatforms.get(i).fX + 100) &&
-//                    (heroPosition.y < alPlatforms.get(i).fY + 50 || heroPosition.y + fHeroHeight > alPlatforms.get(i).fY)) {
-//            }
-        }
-
-    }
+//    public void platforms() {
+//        alPlatforms.add(new Platforms(0, 50, batch));
+//        alPlatforms.add(new Platforms(150, 250, batch));
+//        alPlatforms.add(new Platforms(400, 450, batch));
+//        alPlatforms.add(new Platforms(450, 250, batch));
+//        alPlatforms.add(new Platforms(600, 50, batch));
+//        for (int i = 0; i < alPlatforms.size(); i++) {
+//            alPlatforms.get(i).Update();
+////            if((heroPosition.x + fHeroWidth > alPlatforms.get(i).fX || heroPosition.x < alPlatforms.get(i).fX + 100) &&
+////                    (heroPosition.y < alPlatforms.get(i).fY + 50 || heroPosition.y + fHeroHeight > alPlatforms.get(i).fY)) {
+////            }
+//        }
+//
+//    }
 
     public void move() {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             heroPosition.x += 5;
-//            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-//                heroPosition.y += 5;
-//            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-//                heroPosition.y -= 5;
-//            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             heroPosition.x -= 5;
         }
@@ -122,7 +120,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
 //        }
     }
 
-    public void spawnBullets() {
+    public void spawnBullets() { // showing the bullets 
         for (int i = 0; i < alBullets.size(); i++) {
             alBullets.get(i).Update();
             if (isOutOfRange(alBullets.get(i))) {
@@ -136,7 +134,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
         }
     }
 
-    public void Holster() {
+    public void Holster() { //visual representation of the bullets
         SR.begin(ShapeType.Filled);
         SR.setColor(Color.CYAN);
         if (nMax < 4) {
@@ -154,12 +152,12 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
         SR.end();
     }
 
-    private boolean isOutOfRange(Bullets bullet) {
+    private boolean isOutOfRange(Bullets bullet) { // touching the sides of the screen
         return bullet.vPos.x < 0 || bullet.vPos.x + 10 > Gdx.graphics.getWidth()
                 || bullet.vPos.y <= 0 || bullet.vPos.y + 10 >= Gdx.graphics.getHeight();
     }
 
-    private boolean isCollected(Bullets bullet) {
+    private boolean isCollected(Bullets bullet) { // if player touches the bullets 
         return heroPosition.x <= bullet.vPos.x + 10 && heroPosition.x + fHeroWidth >= bullet.vPos.x
                 && heroPosition.y <= bullet.vPos.y + 10 && heroPosition.y + fHeroHeight >= bullet.vPos.y;
     }
@@ -192,7 +190,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean touchUp(int i, int i1, int i2, int i3) {
-        if (nMax < 4) {
+        if (nMax < 4) { // maximum of 4 bullets
             mousePosition = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
             bulletPosition = new Vector2(heroPosition.x + fHeroWidth / 2, heroPosition.y + fHeroHeight / 2);
             vDir = mousePosition.sub(heroPosition);
