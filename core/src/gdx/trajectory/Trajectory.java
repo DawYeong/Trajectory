@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class Trajectory extends ApplicationAdapter implements InputProcessor {
 
     SpriteBatch batch;
+    Sound sound;
     Sprite Hero;
     Texture img;
     Vector2 heroPosition, bulletPosition, mousePosition, vDir;
@@ -31,6 +33,8 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
     public void create() {
         Gdx.input.setInputProcessor(this);
         batch = new SpriteBatch();
+        
+        sound = Gdx.audio.newSound(Gdx.files.internal("Pew.mp3"));
         img = new Texture("smiley face.png");
         Hero = new Sprite(img);
         SR = new ShapeRenderer();
@@ -166,6 +170,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
     public void dispose() {
         batch.dispose();
         img.dispose();
+        sound.dispose();
     }
 
     @Override
@@ -195,6 +200,7 @@ public class Trajectory extends ApplicationAdapter implements InputProcessor {
             bulletPosition = new Vector2(heroPosition.x + fHeroWidth / 2, heroPosition.y + fHeroHeight / 2);
             vDir = mousePosition.sub(heroPosition); //Daniel Shiffman helped us a bit with the mouse vectors
             alBullets.add(new Bullets(bulletPosition, vDir, SR));
+           sound.play();
             nMax++;
         }
         return false;
